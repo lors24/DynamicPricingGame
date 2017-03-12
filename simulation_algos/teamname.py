@@ -39,7 +39,7 @@ class TeamNameSeller(Seller):
         """
         return TEAM_NAME
 
-    def get_price(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
+    def _get_price_impl(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
        """
         TODO: Fill in your code here -- right now this skeleton code always gives an arbitrary price
         """

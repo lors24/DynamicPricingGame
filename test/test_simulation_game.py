@@ -1,4 +1,4 @@
-from simulation_game.buyer import MyopicBuyer
+from simulation_game.buyer import MyopicBuyer, FaultyBuyer
 from simulation_game.seller import DummySeller
 from simulation_game.simulation import simulate
 
@@ -57,6 +57,18 @@ def test_simulation_game_with_three_teams():
     assert mean_cs[0] > mean_cs[1]
     assert np.all(mean_cs > 0.)
 
+
+def test_faulty_bots_scenario():
+    rn.seed(1234)
+    buyer1 = MyopicBuyer("Sarah")
+    seller1 = DummySeller("Sarah")
+    buyer2 = FaultyBuyer()
+    seller2 = DummySeller("Basil")
+    teams = [(buyer1, seller1), (buyer2, seller2)]
+    # This code should terminate.. that's all we're testing
+    simulate(teams, horizon, x_0, 1, price_scale)
+
 test_simulation_game_with_two_teams_same_strategies()
 test_simulation_game_with_two_teams_different_strategies()
 test_simulation_game_with_three_teams()
+test_faulty_bots_scenario()

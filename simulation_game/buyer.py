@@ -1,6 +1,15 @@
 from abc import ABCMeta
 from abc import abstractmethod
 
+import signal
+import time
+
+EXECUTION_TIME_LIMIT_IN_SECONDS = 1
+
+
+def signal_handler(signum, frame):
+    raise Exception("Execution timed out!")
+
 
 class Buyer(object):
     """
@@ -27,7 +36,15 @@ class Buyer(object):
         if sum(self.purchase_history) >= 1:
             # if the buyer bought one item already, then we prevent him from doing so again
             return 0
-        return self._get_decision_impl(t, inventory_h, price_h, reserve_price, b_t_1_n, horizon, num_buyers)
+
+        # Limit execution to 1 second!
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(EXECUTION_TIME_LIMIT_IN_SECONDS)
+        try:
+            return self._get_decision_impl(t, inventory_h, price_h, reserve_price, b_t_1_n, horizon, num_buyers)
+        except Exception:
+            print "Execution timed out for buyer", self.get_name()
+            return 0
 
     @abstractmethod
     def _get_decision_impl(self, t, inventory_h, price_h, reserve_price, b_t_1_n, horizon, num_buyers):
@@ -63,3 +80,16 @@ class MyopicBuyer(Buyer):
         This simple buyer bot will always buy as long as the seller's posted price is below its reserve price
         """
         return 1 if reserve_price > price_h[t] else 0
+
+
+class FaultyBuyer(Buyer):
+    """
+    A bad example of a buyer. This is to test that we do stop long running bots
+    """
+    def get_name(self):
+        return "FaultyBuyer"
+
+    def _get_decision_impl(self, t, inventory_h, price_h, reserve_price, b_t_1_n, horizon, num_buyers):
+        while True:
+            time.sleep(5)
+        return 1

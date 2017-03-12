@@ -1,6 +1,15 @@
 from abc import ABCMeta
 from abc import abstractmethod
 
+import signal
+import numpy as np
+
+EXECUTION_TIME_LIMIT_IN_SECONDS = 1
+
+
+def signal_handler(signum, frame):
+    raise Exception("Execution timed out!")
+
 
 class Seller(object):
     """
@@ -8,8 +17,18 @@ class Seller(object):
     """
     __metaclass__ = ABCMeta
 
-    @abstractmethod
     def get_price(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
+        # Limit execution time of the pricing function to 1 second
+        signal.signal(signal.SIGALRM, signal_handler)
+        signal.alarm(EXECUTION_TIME_LIMIT_IN_SECONDS)
+        try:
+            return self._get_price_impl(t, inventory_h, price_h, price_scale, horizon, num_buyers)
+        except Exception:
+            print "Execution timed out!"
+            return np.inf
+
+    @abstractmethod
+    def _get_price_impl(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
         """
         Queries the seller for the price it's going to post for the current time step
         :param t: current time step
@@ -42,7 +61,7 @@ class DummySeller(Seller):
         self.name = name
         self.constant_price = constant_price
 
-    def get_price(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
+    def _get_price_impl(self, t, inventory_h, price_h, price_scale, horizon, num_buyers):
         """
         This seller always posts a fixed price regardless of anything
         """
