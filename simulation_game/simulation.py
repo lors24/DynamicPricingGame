@@ -9,7 +9,8 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
     :param horizon: length of game
     :param x_0: initial seller's inventory
     :param num_trials: number of Monte Carlo trials for estimating the mean revenue and consumer surplus
-    :param price_scale: distributional parameter for the reserve price
+    :param price_scale: distributional parameter for the reserve price. More precisely the reserve prices are
+                        i.i.d from an Exponential(1/price_scale) distribution, so that E[reserve_price] == price_scale
     :return:
     """
     num_buyers = len(teams) - 1
@@ -17,7 +18,7 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
     # team n's revenue yield when playing as the seller is stored in revenue[n]
     revenue_sample = np.zeros((num_trials, num_buyers+1))
 
-    #team n's aggregate consumer surplus yielded when playing as buyers for N rounds is stored in cs[n]
+    # team n's aggregate consumer surplus yielded when playing as buyers for N rounds is stored in cs[n]
     cs_sample = np.zeros((num_trials, num_buyers+1))
 
     for trial in range(num_trials):
@@ -48,7 +49,7 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
                 p_t = seller.get_price(t, x_h_t, p_h_t, price_scale, horizon, num_buyers)
                 p_h_t.append(p_t)
 
-                b_t = np.zeros(num_buyers+1)  # b_t[m] incidates if buyer m has willingness to buy at time t
+                b_t = np.zeros(num_buyers+1)  # b_t[m] indicates if buyer m has willingness to buy at time t
                 for m in range(num_buyers+1):
                     if m != n and b_h[m] == 0:  # we should exclude team n since it plays as the seller in this round
                         buyer = teams[m][0]
