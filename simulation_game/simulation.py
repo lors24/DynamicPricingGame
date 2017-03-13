@@ -59,7 +59,7 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
                 # serve all demands in the current period
                 if x_t < np.sum(b_t):
                     b_t = np.zeros(num_buyers+1)
-                    buyer_indices = [i for i in range(num_buyers) if n != m]
+                    buyer_indices = [i for i in range(len(teams)) if i != n]
                     b_t[rn.choice(buyer_indices, x_t, replace=False)] = 1
                 b_h += b_t
 
