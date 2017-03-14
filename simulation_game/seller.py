@@ -4,7 +4,7 @@ from abc import abstractmethod
 import signal
 import numpy as np
 
-EXECUTION_TIME_LIMIT_IN_SECONDS = 1
+EXECUTION_TIME_LIMIT_IN_SECONDS = 2
 
 
 def signal_handler(signum, frame):
