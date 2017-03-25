@@ -58,8 +58,8 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
                 # randomly decide who make a purchase if inventory is not enough to
                 # serve all demands in the current period
                 if x_t < np.sum(b_t):
+                    buyer_indices = [i for i in range(len(teams)) if i != n and b_t[i] == 1]
                     b_t = np.zeros(num_buyers+1)
-                    buyer_indices = [i for i in range(len(teams)) if i != n]
                     b_t[rn.choice(buyer_indices, x_t, replace=False)] = 1
                 b_h += b_t
 
