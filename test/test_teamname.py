@@ -19,7 +19,7 @@ def test_my_teams_performance():
     """
     This function is where you can write a test for your buyer and seller bot, and evaluate performance
     """
-    rn.seed(123)
+    rn.seed(1234)
     buyer1 = TeamNameBuyer()
     seller1 = TeamNameSeller()
     buyer2 = MyopicBuyer("Steve")
