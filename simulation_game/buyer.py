@@ -37,7 +37,7 @@ class Buyer(object):
             # if the buyer bought one item already, then we prevent him from doing so again
             return 0
 
-        # Limit execution to 1 second!
+        #Limit execution to 1 second!
         signal.signal(signal.SIGALRM, signal_handler)
         signal.alarm(EXECUTION_TIME_LIMIT_IN_SECONDS)
         try:
@@ -45,6 +45,7 @@ class Buyer(object):
         except Exception:
             print "Execution timed out for buyer", self.get_name()
             return 0
+        return
 
     @abstractmethod
     def _get_decision_impl(self, t, inventory_h, price_h, reserve_price, b_t_1_n, horizon, num_buyers):

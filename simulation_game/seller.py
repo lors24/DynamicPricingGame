@@ -10,7 +10,6 @@ EXECUTION_TIME_LIMIT_IN_SECONDS = 2
 def signal_handler(signum, frame):
     raise Exception("Execution timed out!")
 
-
 class Seller(object):
     """
     Abstract class of a simulation game seller. Defines a common interface for every team
