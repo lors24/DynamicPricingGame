@@ -8,8 +8,6 @@ from simulation_game.simulation import simulate
 
 import numpy.random as rn
 
-print 2+2
-
 # Set these parameters how you want for testing
 price_scale = 3
 mc_trials = 100
