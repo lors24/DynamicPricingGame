@@ -13,6 +13,7 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
                         i.i.d from an Exponential(1/price_scale) distribution, so that E[reserve_price] == price_scale
     :return:
     """
+
     num_buyers = len(teams) - 1
 
     # team n's revenue yield when playing as the seller is stored in revenue[n]
