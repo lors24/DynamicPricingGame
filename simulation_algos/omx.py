@@ -8,7 +8,6 @@ from simulation_game.seller import Seller
 from cvxpy import *
 import numpy as np
 import math
-import numpy as np
 import numpy.random as rn
 import gurobipy
 
@@ -49,16 +48,30 @@ class OMXSeller(Seller):
         """
         TODO: Fill in your code here -- right now this skeleton code always gives an arbitrary price
         """
-        price = self.decision(num_buyers, horizon, inventory_h[t],price_scale,10000,10)
+        
+        #price = self.decision()
         #print type(price)
-        return price
 
-    def decision(self,N,T,x0,l,M,s):
+        N = 10
+        T = 30
+        x0 = 10.
+        xt = 8
+        l = 4
+        M = 100000
+        s = 10 #number of splines
+    
+        index = np.array(range(N+1))
+        # Construct the problem.
+
+        #Variables
+
+
         p = Variable(T)
         y = Int(T,N+1)
         z = Variable(T,N+1)
         beta = Variable(s,T)
         w = Int(s-1,T)
+        sales = 0.8
         Nt = np.ones(T)*(N-(x0-xt))-sales*np.array([range(1,T+1)])
         Nt = Nt.clip(0)
 
@@ -95,5 +108,10 @@ class OMXSeller(Seller):
                 constraints.append(z[t,i]<=M*y[t,i])
                 constraints.append(i*y[t,i] <= Nt[0,t]*(beta[:,t].T*aux4)) 
         prob = Problem(objective, constraints)
-        result = prob.solve(solver = GUROBI, verbose = True)
-        return p.value.item(0)
+        print "antes"
+        result = prob.solve(solver = GUROBI)
+        print "resultado", result
+        return 2
+
+
+        
