@@ -7,8 +7,8 @@ import numpy.random as rn
 
 price_scale = 3
 mc_trials = 100
-x_0 = 3
-horizon = 4
+x_0 = 1
+horizon = 1
 
 
 def test_simulation_game_with_two_teams_same_strategies():

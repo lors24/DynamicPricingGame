@@ -27,7 +27,7 @@ class OMXBuyer(Buyer):
         """
         return TEAM_NAME
 
-    def decide_prices(self,N,T,t,x0,xt,l,M,s):
+    def decide_prices(self,N,T,t,x0,xt,l,M,s,p0):
 
         index = np.array(range(N+1))
         # Construct the problem.
@@ -66,6 +66,7 @@ class OMXBuyer(Buyer):
                        beta[9,:] <= w[8,:],
                        sum_entries(beta, axis=0) == 1,
                        p[1:] <= p[:-1],
+                       p[0]<=p0,
                        p>=0, y>=0,
                        beta >= 0,
                        w >= 0,
@@ -104,6 +105,8 @@ class OMXBuyer(Buyer):
         else:
             if t == 0:
                 l = reserve_price
+            elif t==horizon and sum(b_t_1_n<1):
+                return 1
             else:
                 for ts in range(1,t+1):
                     Y[ts-1] = inventory_h[ts-1]-inventory_h[ts]
@@ -113,18 +116,23 @@ class OMXBuyer(Buyer):
                     else:
                         lambdas[ts] = -price_h[ts-1]/(math.log(Y[ts-1]/Nt[ts-1]))
                 l = np.mean(lambdas)
-            prices, NT = self.decide_prices(N,T,t,x0,xt,l,M,s)
+            prices, NT = self.decide_prices(N,T,t,x0,xt,l,M,s,price_h[t])
 
+            
             suma = np.zeros((T,1))
             for ts in range(T):
-                if inventory_h[t]>1:            
-                    for s in range(inventory_h[t]):
-                        if NT[0,ts]>= s:
-                            suma[ts] += comb(math.ceil(NT[0,ts]),s)*math.exp(-(prices[ts]*s)/l)*math.pow(1-math.exp(-prices[ts]/l),math.ceil(NT[0,ts]-s))
+                if inventory_h[t]>1: 
+                    print "here"
+                    #print math.floor(inventory_h[t]-(x0-xt)*ts/t)
+                    #print "cap", cap
+                    for s in range(inventory_h[]):
+                        if NT[0,ts]-1> s:
+                            suma[ts] += comb(math.ceil(NT[0,ts])-1,s)*math.exp(-(prices[ts]*s)/l)*math.pow(1-math.exp(-prices[ts]/l),math.ceil(NT[0,ts])-1-s)
             values = reserve_price-prices
             expected_revenues = np.multiply(values, suma)
-            return 1
-            if np.argmax(expected_revenues) ==  0:
+            print expected_revenues
+
+            if np.argmax(expected_revenues) <=  3: # and expected_revenues[0]>=0:
                 return 1
             else:
                 return 0
@@ -153,8 +161,10 @@ class OMXSeller(Seller):
         z = Variable(T,N+1)
         beta = Variable(s,T)
         w = Int(s-1,T)
-        sales = (x0-xt)/(t+1)
-        #sales = 0.8
+        if t==0:
+            sales = math.exp(-1)
+        else:
+            sales = (x0-xt)/t
         Nt = np.ones(T)*(N-(x0-xt))-sales*np.array([range(1,T+1)])
         Nt = Nt.clip(0)
 

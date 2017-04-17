@@ -9,10 +9,10 @@ from simulation_game.simulation import simulate
 import numpy.random as rn
 
 # Set these parameters how you want for testing
-price_scale = 3
+price_scale = 20
 mc_trials = 10
 x_0 = 4
-horizon = 5
+horizon = 10
 
 
 def test_my_teams_performance():
@@ -24,7 +24,7 @@ def test_my_teams_performance():
     seller1 = OMXSeller()
     buyer2 = MyopicBuyer("Steve")
     seller2 = DummySeller("Steve")
-    teams = [(buyer1, seller1), (buyer2, seller2), (buyer2, seller2), (buyer2, seller2), (buyer2, seller2)]
+    teams = [(buyer1, seller1), (buyer2, seller2), (buyer2, seller2), (buyer2, seller2), (buyer2, seller2),(buyer2, seller2),(buyer2, seller2)]
     mean_revenue, mean_cs = simulate(teams, horizon, x_0, mc_trials, price_scale)
     print mean_revenue, mean_cs
 
