@@ -48,23 +48,18 @@ class OMXSeller(Seller):
         """
         TODO: Fill in your code here -- right now this skeleton code always gives an arbitrary price
         """
-        
-        #price = self.decision()
-        #print type(price)
+        N = num_buyers
+        T = horizon
+        x0 = inventory_h[0]
+        xt = inventory_h[t]
+        l = price_scale
+        M = 10000
+        s = 10
 
-        N = 10
-        T = 30
-        x0 = 10.
-        xt = 8
-        l = 4
-        M = 100000
-        s = 10 #number of splines
-    
         index = np.array(range(N+1))
         # Construct the problem.
 
         #Variables
-
 
         p = Variable(T)
         y = Int(T,N+1)
@@ -108,10 +103,14 @@ class OMXSeller(Seller):
                 constraints.append(z[t,i]<=M*y[t,i])
                 constraints.append(i*y[t,i] <= Nt[0,t]*(beta[:,t].T*aux4)) 
         prob = Problem(objective, constraints)
-        print "antes"
         result = prob.solve(solver = GUROBI)
-        print "resultado", result
-        return 2
+        prices = p.value.item(0)
+        print "precios", prices
+
+        return prices
+        
+        #price = self.decision()
+        #print type(price)
 
 
         
